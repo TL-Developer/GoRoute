@@ -1,0 +1,15 @@
+services:
+  nestjs:
+    build: ./nestjs-api
+    volumes:
+      - ./nestjs-api:/home/node/nestjs
+    ports:
+      - 3000:3000
+
+  mongodb:
+    build: ./.docker/mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - 27017:27017

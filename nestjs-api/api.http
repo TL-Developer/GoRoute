@@ -1,0 +1,42 @@
+# /places Capturar o place_id de um lugar no Google Maps
+GET http://localhost:3000/v1/places?text=av alipio de barros, 150
+
+###
+
+# /places Capturar o place_id de um lugar no Google Maps
+GET http://localhost:3000/v1/places?text=av paulista, 3000
+
+###
+
+@originId = ChIJyz-MC5ZjzpQR8ws0ZA9h6g8
+@destinationId = ChIJIXSzNyxYzpQRyjJg3_fGg1E
+
+# /directions Traçar trajeto entre 2 lugares
+
+GET http://localhost:3000/v1/directions?originId={{originId}}&destinationid={{destinationId}}
+
+###
+
+# /routes Criar rota e persistir no mongodb
+
+POST http://localhost:3000/v1/routes
+Content-Type: application/json
+
+{
+  "name": "rota 1",
+  "source_id": "{{originId}}",
+  "destination_id": "{{destinationId}}"
+}
+
+
+###
+
+# /routes Consulta todas as rotas
+
+GET http://localhost:3000/v1/routes
+
+###
+
+# /routes Consulta rota específica
+
+GET http://localhost:3000/v1/routes/6758c9b72eb86ab6f7a90ac1
