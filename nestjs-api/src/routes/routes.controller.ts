@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { RoutesService } from './routes.service';
 import { CreateRouteDto } from './dto/create-route.dto';
+import { ResultResponse } from 'src/utils/Response/contract.response';
 // import { UpdateRouteDto } from './dto/update-route.dto';
 
 @Controller('v1/routes')
@@ -21,13 +22,23 @@ export class RoutesController {
   }
 
   @Get()
-  findAll() {
-    return this.routesService.findAll();
+  async findAll() {
+    const result = await this.routesService.findAll();
+
+    return new ResultResponse<any>().success({
+      message: 'Rotas geradas com sucesso',
+      output: result,
+    });
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.routesService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const result = await this.routesService.findOne(id);
+
+    return new ResultResponse<any>().success({
+      message: 'Rotas geradas com sucesso',
+      output: result,
+    });
   }
 
   // @Patch(':id')

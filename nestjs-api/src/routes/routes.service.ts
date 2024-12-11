@@ -13,7 +13,7 @@ export class RoutesService {
 
   async create(createRouteDto: CreateRouteDto) {
     const {
-      output: { available_travel_modes, geocoded_waypoints, routes, request },
+      available_travel_modes, geocoded_waypoints, routes, request,
     } = await this.directionsService.getDirections(
       createRouteDto.source_id,
       createRouteDto.destination_id,
