@@ -1,7 +1,7 @@
 # GoRoute
 Projeto de gerenciamento de rotas de entrega em tempo real, integrada ao Google Maps que fornece atualizações ao vivo, previsão de chegadas, monitoramento das entregas e calculo do frente. utilizando NestJS, NextJS, NodeJS, Typescript, ReactJS, GoLang, Apache Kafka, MongoDB, Websocket e TailwindCSS
 
-## System Design
+# System Design
 
 ### Criação de novas rotas
 
@@ -19,7 +19,7 @@ Projeto de gerenciamento de rotas de entrega em tempo real, integrada ao Google 
 
 ![alt text](image-3.png)
 
-## How to start all the projects with Docker
+# How to start all the projects with Docker
 
 ```docker compose up ```
 
@@ -27,7 +27,12 @@ or with --build to build all services
 
 ```docker compose up --build ```
 
-### NestJS
+# NestJS
+
+- Endpoint para capturar place id de um lugar no Google Maps
+- Endpoint para traçar trajeto em 2 lugares
+- Endpoint para criar rotas e persistir no MongoDB
+- Integração com Google Maps API Directions
 
 To run the project use the command below and running on port 3000
 
@@ -44,3 +49,15 @@ To run with repl
 ```npm run start:repl```
 
 Ex: await get(RoutesService).findAll()
+
+# NextJS
+
+- Página de criação de rotas
+- Página de trafegar rotas
+- Páginade monitoramento de veículos
+- Integração com API Backend NestJS
+- Integração com Google Maps API
+
+To run the project and running on port 3001
+
+```cd frontend-nextjs && npm run dev``` 

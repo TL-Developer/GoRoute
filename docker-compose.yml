@@ -1,3 +1,11 @@
+version: '3.1'
+
+networks:
+  app-network:
+    name: app-network
+    driver:
+      bridge
+
 services:
   nestjs:
     build: ./nestjs-api
@@ -5,6 +13,8 @@ services:
       - ./nestjs-api:/home/node/nestjs
     ports:
       - 3000:3000
+    networks:
+      - app-network
 
   mongodb:
     build: ./.docker/mongodb
@@ -13,3 +23,5 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     ports:
       - 27017:27017
+    networks:
+      - app-network
