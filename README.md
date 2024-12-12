@@ -61,3 +61,56 @@ Ex: await get(RoutesService).findAll()
 To run the project and running on port 3001
 
 ```cd frontend-nextjs && npm run dev``` 
+
+# Go Lang
+
+## Requerimentos
+
+É necessário integrar com Google Maps, para isso, é necessário criar uma chave de API no Google Cloud Platform. Para isso, siga os passos:
+
+1. Acesse o [Google Cloud Platform](https://cloud.google.com/).
+2. Crie um novo projeto.
+3. Ative a API do Places, Directions e Maps JavaScript do Google Maps.
+4. Guarde a chave de API gerada.
+
+## Rodar a aplicação
+
+Gere o arquivo `.env` através do comando:
+
+```
+cp .env.example .env
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+Rode o servidor:
+
+```bash
+npm run dev
+```
+
+# Events
+
+**RouteCreated** (evento rota criada)
+
+- id
+- distance
+- directions
+  - lat
+  - lng
+
+**FreightCalculated** (evento frete calculado para tal rota criada)
+- route_id
+- amount
+
+**DeliveryStarted** (evento de entrega iniciou)
+- route_id
+
+**DriverMoved** (evento do motorista se movimentando) -> é aqui que podemos adicionar um novo projeto de placa gps ao automóvel
+- route_id
+- lat
+- lng
