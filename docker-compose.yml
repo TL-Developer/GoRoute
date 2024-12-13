@@ -98,6 +98,7 @@ services:
       - kafka
     volumes:
       - ./golang-simulator:/app
+    command: sh -c "go run cmd/simulator/main.go"
 
   nestjs:
     build: ./nestjs-api
@@ -110,6 +111,7 @@ services:
     depends_on:
       - mongodb
       - kafka
+    command: sh -c "npm run start:dev"
 
   nextjs:
     build:
@@ -117,6 +119,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./frontend-nextjs:/home/node/nextjs
+    command: sh -c "npm run dev"
     ports:
       - 3001:3001
     # networks:
