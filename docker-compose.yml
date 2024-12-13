@@ -1,21 +1,12 @@
 version: '3.1'
 
-networks:
-  app-network:
-    name: app-network
-    driver:
-      bridge
+# networks:
+#   app-network:
+#     name: app-network
+#     driver:
+#       bridge
 
 services:
-  nestjs:
-    build: ./nestjs-api
-    volumes:
-      - ./nestjs-api:/home/node/nestjs
-    ports:
-      - 3000:3000
-    networks:
-      - app-network
-
   mongodb:
     build: ./.docker/mongodb
     environment:
@@ -23,5 +14,112 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: root
     ports:
       - 27017:27017
-    networks:
-      - app-network
+    # networks:
+    #   - app-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+
+  kafka:
+    image: confluentinc/cp-kafka:7.3.0
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+      - 9094:9094
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_LISTENERS: INTERNAL://:9092,OUTSIDE://:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092,OUTSIDE://host.docker.internal:9094
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+    healthcheck:
+      test: kafka-topics --bootstrap-server kafka:9092 --list
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  kafka-topic-generator:
+    image: confluentinc/cp-kafka:7.3.0
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: >
+      bash -c "
+      kafka-topics --create --topic route --if-not-exists --bootstrap-server kafka:9092 &&
+      kafka-topics --create --topic freight --if-not-exists --bootstrap-server kafka:9092 &&
+      kafka-topics --create --topic simulation --if-not-exists --bootstrap-server kafka:9092"
+
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:7.3.0
+    hostname: control-center
+    depends_on:
+      - kafka
+    ports:
+      - "9021:9021"
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: "kafka:9092"
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      PORT: 9021
+
+  # simulator_prod:
+  #   build:
+  #     context: ./golang-simulator
+  #     target: final
+  #     dockerfile: Dockerfile.prod
+  #   environment:
+  #     - MONGO_URI=mongodb://root:root@mongodb:27017/gosimulator?authSource=admin
+  #     - KAFKA_BROKER=kafka:9092
+  #     - KAFKA_ROUTE_TOPIC=route
+  #     - KAFKA_FREIGHT_TOPIC=freight
+  #     - KAFKA_SIMULATION_TOPIC=simulation
+  #     - KAFKA_GROUP_ID=route-group
+
+  simulator:
+    build:
+      context: ./golang-simulator
+      dockerfile: Dockerfile
+    environment:
+      - MONGO_URI=mongodb://root:root@mongodb:27017/gosimulator?authSource=admin&directConnection=true
+      - KAFKA_BROKER=kafka:9092
+      - KAFKA_ROUTE_TOPIC=route
+      - KAFKA_FREIGHT_TOPIC=freight
+      - KAFKA_SIMULATION_TOPIC=simulation
+      - KAFKA_GROUP_ID=route-group
+    depends_on:
+      - mongodb
+      - kafka
+    volumes:
+      - ./golang-simulator:/app
+
+  nestjs:
+    build: ./nestjs-api
+    volumes:
+      - ./nestjs-api:/home/node/nestjs
+    ports:
+      - 3000:3000
+    # networks:
+    #   - app-network
+    depends_on:
+      - mongodb
+      - kafka
+
+  nextjs:
+    build:
+      context: ./frontend-nextjs
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend-nextjs:/home/node/nextjs
+    ports:
+      - 3001:3001
+    # networks:
+    #   - app-network
+    depends_on:
+      - nestjs

@@ -28,6 +28,9 @@ Content-Type: application/json
   "destination_id": "{{destinationId}}"
 }
 
+###
+POST http://localhost:3000/v1/routes/67596c02396abb18d0c69574/start
+
 
 ###
 

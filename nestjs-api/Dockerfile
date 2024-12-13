@@ -1,4 +1,5 @@
-FROM node:18.20.4-alpine
+FROM node:22.8.0-slim
+# FROM node:18.20.4-alpine
 
 RUN npm install -g @nestjs/cli@10.4.9
 

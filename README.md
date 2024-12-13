@@ -19,13 +19,36 @@ Projeto de gerenciamento de rotas de entrega em tempo real, integrada ao Google 
 
 ![alt text](image-3.png)
 
-# How to start all the projects with Docker
+# How to start all the projects with Docker Compose
+
+![alt text](image-4.png)
 
 ```docker compose up ```
+
+run http api server
+
+```docker compose exec nestjs sh && npm run start:dev ```
+
+run consumer server
+
+```docker compose exec nestjs sh && npm run start:dev -- --entryFile=cmd/kafka.cmd ```
+
+run simulator server
+
+```docker compose exec simulator sh && go run cmd/simulator/main.go ```
+
+run nextjs frontend
+
+```docker compose exec nextjs sh && npm run dev ```
+
 
 or with --build to build all services
 
 ```docker compose up --build ```
+
+# Control Center Kafka
+
+running on port 9021
 
 # NestJS
 
@@ -48,7 +71,13 @@ To run with repl
 
 ```npm run start:repl```
 
+```docker compose exec -it simulator sh```
+
 Ex: await get(RoutesService).findAll()
+
+To run the consumer
+
+```npm run start:dev -- --entryFile=cmd/kafka.cmd```
 
 # NextJS
 
@@ -114,3 +143,5 @@ npm run dev
 - route_id
 - lat
 - lng
+
+
